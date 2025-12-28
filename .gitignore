@@ -1,0 +1,15 @@
+node_modules/
+**/node_modules/
+*.log
+.env
+card-bot/.env
+card-bot/bot.log
+card-bot/cards.db
+card-bot/backups/
+backups/
+.DS_Store
+npm-debug.log
+dist/
+/.idea/
+/.vscode/
+coverage/
