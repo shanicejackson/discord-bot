@@ -240,7 +240,13 @@ function attachPullHandlers(message, ctx) {
     const state = ctx.state || { card: ctx.card };
 
     try { console.log('[attachPullHandlers] attaching pull handlers to message', { messageId: message.id, user: user?.id, cardId: state.card && state.card.id }); } catch (e) {}
-    const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000 });
+    // Allow configuring the pull UI timeout via PULL_COLLECTOR_TIMEOUT_MS in .env
+    // If the env var is 0 or unset, we omit the `time` option so the collector does not auto-timeout
+    const _pullTimeout = parseInt(process.env.PULL_COLLECTOR_TIMEOUT_MS, 10);
+    const collectorOptions = { componentType: ComponentType.Button };
+    if (!Number.isNaN(_pullTimeout) && _pullTimeout > 0) collectorOptions.time = _pullTimeout;
+    try { console.log('[attachPullHandlers] creating collector with options', collectorOptions); } catch (e) {}
+    const collector = message.createMessageComponentCollector(collectorOptions);
     try { console.log('[attachPullHandlers] collector created for message', { messageId: message.id, collector: !!collector }); } catch (e) {}
 
     collector.on('collect', async (i) => {
